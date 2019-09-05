@@ -27,6 +27,13 @@ def create_leftist_heap(keys):
     return heap
 
 
+def create_skew_heap(keys):
+    heap = LeftistHeap(skew_heap=True)
+    for i in keys:
+        heap.add(i)
+    return heap
+
+
 def test_heap(heap, n=50000):
     for i in range(1, n + 1):
         if i != heap.get_min() or i != heap.extract_min():
@@ -86,7 +93,21 @@ def test_leftist_heap(n=10000):
         test_heap_and_write_result(heap, time.time() - start_time, keys_size)
 
 
+def test_skew_heap(n=10000):
+    print("=====Test skew heap=====")
+    for k in range(1, 11):
+        keys_size = random.randint(n // 2, n)
+        print("Test number {} n = {}".format(k, keys_size))
+        keys = list(range(1, keys_size + 1))
+        random.shuffle(keys)
+
+        start_time = time.time()
+        heap = create_skew_heap(keys)
+        test_heap_and_write_result(heap, time.time() - start_time, keys_size)
+
+
 if __name__ == "__main__":
     test_kary_heap(100000)
     test_binomial_heap(10000)
     test_leftist_heap(100000)
+    test_skew_heap(100000)
