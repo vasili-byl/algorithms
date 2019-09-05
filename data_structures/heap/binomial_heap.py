@@ -3,7 +3,6 @@
 class BinomialNode(object):
     children = None
     value = None
-    parent = None
 
     def __init__(self, value):
         self.value = value
@@ -11,7 +10,6 @@ class BinomialNode(object):
 
     def add_child(self, child):
         self.children.append(child)
-        child.parent = self
 
 
 class BinomialTree(object):
@@ -85,7 +83,6 @@ class BinomialHeap(object):
         heap = BinomialHeap()
         size = 1
         for node in tree.head.children:
-            node.parent = None
             heap.trees.append(BinomialTree(node, size))
             size *= 2
         self.__meld(heap)

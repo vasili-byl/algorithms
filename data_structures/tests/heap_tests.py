@@ -2,6 +2,7 @@ import random
 import time
 from data_structures.heap.kary_heap import KaryHeap
 from data_structures.heap.binomial_heap import BinomialHeap
+from data_structures.heap.leftist_heap import LeftistHeap
 
 
 def create_kary_heap_add(k, keys):
@@ -17,6 +18,13 @@ def create_kary_heap_make(k, keys):
 
 def create_binomial_heap(keys):
     return BinomialHeap(keys)
+
+
+def create_leftist_heap(keys):
+    heap = LeftistHeap()
+    for i in keys:
+        heap.add(i)
+    return heap
 
 
 def test_heap(heap, n=50000):
@@ -55,15 +63,30 @@ def test_kary_heap(n=100000):
 def test_binomial_heap(n=10000):
     print("=====Test binomial heap=====")
     for k in range(1, 11):
-        print("Test number {}".format(k))
-        keys = list(range(1, n + 1))
+        keys_size = random.randint(n // 2, n)
+        print("Test number {} n = {}".format(k, keys_size))
+        keys = list(range(1, keys_size + 1))
         random.shuffle(keys)
 
         start_time = time.time()
         heap = create_binomial_heap(keys)
-        test_heap_and_write_result(heap, time.time() - start_time, n)
+        test_heap_and_write_result(heap, time.time() - start_time, keys_size)
+
+
+def test_leftist_heap(n=10000):
+    print("=====Test leftist heap=====")
+    for k in range(1, 11):
+        keys_size = random.randint(n // 2, n)
+        print("Test number {} n = {}".format(k, keys_size))
+        keys = list(range(1, keys_size + 1))
+        random.shuffle(keys)
+
+        start_time = time.time()
+        heap = create_leftist_heap(keys)
+        test_heap_and_write_result(heap, time.time() - start_time, keys_size)
 
 
 if __name__ == "__main__":
     test_kary_heap(100000)
     test_binomial_heap(10000)
+    test_leftist_heap(100000)
