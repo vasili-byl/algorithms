@@ -8,7 +8,7 @@ class KaryHeap:
             for i in range(len(self.__nodes) - 1, -1, -1):
                 self.__sift_down(i)
 
-    def  add(self, key):
+    def add(self, key):
         self.__nodes.append(key)
         self.__sift_up(len(self.__nodes) - 1)
 
