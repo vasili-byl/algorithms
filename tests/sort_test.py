@@ -1,7 +1,7 @@
 import random
-import insertion_sort
-import merge_sort
-import qsort
+import sort.insertion_sort as insertion_sort
+import sort.merge_sort as merge_sort
+import sort.qsort as qsort
 
 
 def test_sort(sort_algorithm, n_experiments=1000, max_size=None):

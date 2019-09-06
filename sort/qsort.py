@@ -1,6 +1,6 @@
 import random
-from merge_sort import PairSort
-from sort import Sort
+from sort.merge_sort import PairSort
+from sort.sort import Sort
 
 
 def random_pivot_selector(array, left_bound, right_bound):
