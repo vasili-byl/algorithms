@@ -1,4 +1,4 @@
-from sort import Sort
+from sort.abstract_sort import Sort
 
 
 class InsertionSort(Sort):
