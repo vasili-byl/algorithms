@@ -1,11 +1,14 @@
+from sort import Sort
 
-def pair_sort(array, left_bound, right_bound):
-    if right_bound - left_bound > 1:
-        raise RuntimeError("Error! You are trying to use pair_sort for array with size not equal 2.")
-    if array[left_bound] > array[right_bound]:
-        temp = array[left_bound]
-        array[left_bound] = array[right_bound]
-        array[right_bound] = temp
+
+class PairSort(Sort):
+    def __call__(self, array, left_bound, right_bound):
+        if right_bound - left_bound > 1:
+            raise RuntimeError("Error! You are trying to use pair_sort for array with size not equal 2.")
+        if array[left_bound] > array[right_bound]:
+            temp = array[left_bound]
+            array[left_bound] = array[right_bound]
+            array[right_bound] = temp
 
 
 def simplest_merge(array, first_part_begin, second_part_begin, second_part_end, buffer=None):
@@ -38,19 +41,35 @@ def simplest_merge(array, first_part_begin, second_part_begin, second_part_end, 
             current += 1
 
 
-def merge_sort(array,
-               bottom_part_max_size=2,
-               bottom_part_sort=pair_sort,
-               merge_algorithm=simplest_merge,
-               merge_buffer=None):
-    array_size = len(array)
-    part_size = bottom_part_max_size
-    for i in range(0, array_size, bottom_part_max_size):
-        bottom_part_sort(array, i, min(i + bottom_part_max_size, array_size) - 1)
-    while part_size < array_size:
-        for first_part_begin in range(0, array_size, 2 * part_size):
-            second_part_begin = first_part_begin + part_size
-            if second_part_begin < array_size:
-                second_part_end = min(second_part_begin + part_size, array_size) - 1
-                merge_algorithm(array, first_part_begin, second_part_begin, second_part_end, merge_buffer)
-        part_size *= 2
+class MergeSort(Sort):
+    def __init__(self,
+                 bottom_part_max_size=2,
+                 bottom_part_sort=None,
+                 merge_algorithm=simplest_merge,
+                 merge_buffer=None):
+        self.bottom_part_max_size = bottom_part_max_size
+        if bottom_part_sort is None:
+            if bottom_part_max_size > 2:
+                raise RuntimeError("You specified bottom_part_max_size > 2 but didn't specify bottom_part_sort!")
+            else:
+                bottom_part_sort = PairSort()
+        self.bottom_part_sort = bottom_part_sort
+        self.merge_algorithm = merge_algorithm
+        self.merge_buffer = merge_buffer
+
+    def __call__(self, array, left_bound=None, right_bound=None):
+        if left_bound is None:
+            left_bound = 0
+        if right_bound is None:
+            right_bound = len(array) - 1
+        array_size = right_bound - left_bound + 1
+        part_size = self.bottom_part_max_size
+        for i in range(left_bound, right_bound + 1, self.bottom_part_max_size):
+            self.bottom_part_sort(array, i, min(i + self.bottom_part_max_size - 1, right_bound))
+        while part_size < array_size:
+            for first_part_begin in range(left_bound, right_bound + 1, 2 * part_size):
+                second_part_begin = first_part_begin + part_size
+                if second_part_begin <= right_bound:
+                    second_part_end = min(second_part_begin + part_size - 1, right_bound)
+                    self.merge_algorithm(array, first_part_begin, second_part_begin, second_part_end, self.merge_buffer)
+            part_size *= 2

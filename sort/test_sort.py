@@ -1,5 +1,4 @@
 import random
-
 import insertion_sort
 import merge_sort
 import qsort
@@ -26,9 +25,10 @@ def test_sort(sort_algorithm, n_experiments=1000, max_size=None):
 
 def test_bottom_part_size(sort_algorithm, additional_sort, n_experiments):
     for i in range(n_experiments):
-        bottom_part_size = random.randint(2, 50)
+        bottom_part_size = 2#random.randint(2, 50)
         print("Bottom part size is {}".format(bottom_part_size))
-        with_bottom_sort(test_sort(sort_algorithm, n_experiments=1), additional_sort, bottom_part_size)
+        sort = sort_algorithm(bottom_part_max_size=bottom_part_size, bottom_part_sort=additional_sort)
+        test_sort(sort, n_experiments=1)
 
 
 def buffered(func):
@@ -62,31 +62,30 @@ def add_partition(func, partition):
 
 
 if __name__ == "__main__":
-    #print("=====Insertion sort=====")
-    #test_sort(insertion_sort.insertion_sort, n_experiments=5, max_size=12345)
+    print("=====Insertion sort=====")
+    test_sort(insertion_sort.InsertionSort(), n_experiments=5, max_size=12345)
 
-    #print("=====Merge sort=====")
-    #test_sort(buffered(merge_sort.merge_sort), n_experiments=10)
+    print("=====Merge sort=====")
+    test_sort(merge_sort.MergeSort(), n_experiments=10)
 
-    #print("=====Merge sort with insertion sort for the small parts=====")
-    #test_bottom_part_size(buffered(merge_sort.merge_sort), insertion_sort.insertion_sort, n_experiments=10)
+    print("=====Merge sort with insertion sort for the small parts=====")
+    test_bottom_part_size(merge_sort.MergeSort, insertion_sort.InsertionSort(), n_experiments=10)
 
-    #print("=====Qsort(median of three, standard partition, divide while chunk > 2)=====")
-    #test_sort(qsort.qsort, n_experiments=10)
+    print("=====Qsort(median of three, standard partition, divide while chunk > 2)=====")
+    test_sort(qsort.Qsort(), n_experiments=10)
 
-    #print("=====Qsort(median of three, standard partition)=====")
-    #test_bottom_part_size(qsort.qsort, insertion_sort.insertion_sort, n_experiments=10)
+    print("=====Qsort(median of three, standard partition)=====")
+    test_bottom_part_size(qsort.Qsort, insertion_sort.InsertionSort(), n_experiments=10)
 
     print("=====Qsort(random pivot, divide while chunk size > 16)=====")
-    test_sort(add_pivot(with_bottom_sort(qsort.qsort,
-                                         insertion_sort.insertion_sort,
-                                         16),
-                        qsort.random_pivot_selector),
-              n_experiments=10)
+    sort = qsort.Qsort(bottom_part_max_size=16,
+                       bottom_part_sort=insertion_sort.InsertionSort(),
+                       pivot_selector=qsort.random_pivot_selector)
+    test_sort(sort, n_experiments=10)
 
     print("=====Qsort(random pivot, lomoto partition, divide while chunk size > 16)=====")
-    test_sort(add_pivot(with_bottom_sort(add_partition(qsort.qsort, qsort.lomoto_partition),
-                                         insertion_sort.insertion_sort,
-                                         16),
-                        qsort.random_pivot_selector),
-              n_experiments=10)
+    sort = qsort.Qsort(bottom_part_max_size=16,
+                       bottom_part_sort=insertion_sort.InsertionSort(),
+                       pivot_selector=qsort.random_pivot_selector,
+                       partition_algorithm=qsort.lomoto_partition)
+    test_sort(sort, n_experiments=10)
